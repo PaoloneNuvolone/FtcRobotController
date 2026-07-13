@@ -10,7 +10,7 @@ public class ArcadeDrive {
 
     public void init(HardwareMap hwMap){
         leftMotor = hwMap.get(DcMotor.class, "left_Motor");
-        rightMotor = hwMap.get(DcMotor.class, "righ_tMotor");
+        rightMotor = hwMap.get(DcMotor.class, "right_tMotor");
 
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
