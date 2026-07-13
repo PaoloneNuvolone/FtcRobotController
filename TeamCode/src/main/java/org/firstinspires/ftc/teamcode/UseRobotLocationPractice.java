@@ -39,6 +39,6 @@ public class UseRobotLocationPractice extends OpMode {
         telemetry.addData("heading",robotLocationPractice.getHeading());
         telemetry.addData("Angle",robotLocationPractice.getAngle());
         telemetry.addData("X",robotLocationPractice.getX());
-        telemetry.addData("Y value",robotLocationPractice.getY())
+        telemetry.addData("Y value",robotLocationPractice.getY());
     }
 }

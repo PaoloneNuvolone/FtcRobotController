@@ -9,8 +9,8 @@ public class ArcadeDrive {
     private DcMotor leftMotor, rightMotor;
 
     public void init(HardwareMap hwMap){
-        leftMotor = hwMap.get(DcMotor.class, "left_Motor");
-        rightMotor = hwMap.get(DcMotor.class, "right_tMotor");
+        leftMotor = hwMap.get(DcMotor.class, "left_motor");
+        rightMotor = hwMap.get(DcMotor.class, "right_motor");
 
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -19,8 +19,8 @@ public class ArcadeDrive {
     }
 
     public void drive (double throttle, double spin ){
-        double leftPower = throttle + spin;
-        double rightPower = throttle - spin;
+        double leftPower = throttle - spin;
+        double rightPower = throttle + spin;
         double largest = Math.max(Math.abs(leftPower),Math.abs(rightPower));
 
         if (largest > 1.0){

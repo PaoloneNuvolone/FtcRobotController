@@ -11,7 +11,5 @@ public class TestBenchDistanceSensor {
         distance = hwMap.get(TestBenchDistanceSensor.class, "sensor_distance");
     }
 
-    public double getDistance(){
-        return distance.getDistance(DistanceUnit.CM);
-    }
+
 }
