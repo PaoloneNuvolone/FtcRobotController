@@ -77,9 +77,11 @@ public class TeleOpMovements extends LinearOpMode {
                 rightPower /= max;
             }
 
-            intakeVelocity = (gamepad1.left_bumper) ? 1 : (gamepad1.right_bumper) ? -1 : 0;
+            // Quando è premuto
+            intakeVelocity = (gamepad1.right_bumper) ? 1 : (gamepad1.left_bumper) ? -1 : 0;
             upIntakeMotor.setPower(intakeVelocity);
 
+            // flywheel è un DcMotorEx quindi si può usare setVelocity() al posto di setPower()
             if (gamepad1.cross) {
                 flywheel.setVelocity(TARGET_VELOCITY);
                     // meccanismo per spingere le balls verso la flywheel
