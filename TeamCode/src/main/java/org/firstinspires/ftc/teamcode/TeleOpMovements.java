@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.teamcode.mechanisms.SlewRateAcceleration;
 
 @TeleOp (name = "New Arcade Drive - FGC",group = "TeleOp Competition")
 public class TeleOpMovements extends LinearOpMode {
+    SlewRateAcceleration leftAcceleration = new SlewRateAcceleration(0.05);
+    SlewRateAcceleration rightAcceleration = new SlewRateAcceleration(0.05);
     private DcMotor leftMotor, rightMotor, upIntakeMotor;
     private DcMotorEx flywheel;
 
@@ -77,6 +79,15 @@ public class TeleOpMovements extends LinearOpMode {
                 rightPower /= max;
             }
 
+            // Prima di dare la potenza ai motori, per preservare la batteria, è bene dargli una rampa
+            // di accelerazione
+
+            double leftFilteredPower = leftAcceleration.update(leftPower);
+            double rightFilteredPower = rightAcceleration.update(rightPower);
+
+            leftMotor.setPower(leftFilteredPower);
+            rightMotor.setPower(rightFilteredPower);
+
             // Quando è premuto
             intakeVelocity = (gamepad1.right_bumper) ? 1 : (gamepad1.left_bumper) ? -1 : 0;
             upIntakeMotor.setPower(intakeVelocity);
@@ -92,12 +103,7 @@ public class TeleOpMovements extends LinearOpMode {
                 flywheel.setVelocity(IDLE_VELOCITY);
             }
 
-
-            leftMotor.setPower(leftPower);
-            rightMotor.setPower(rightPower);
-
             telemetry.addData("Status", "Running");
-            telemetry.addData("Drive mode", slowDown ? "SLOW 50%" : "NORMAL 100%");
             telemetry.addData("Left POWER", leftPower);
             telemetry.addData("Right POWER", rightPower);
             telemetry.addData("Left ENCODER", leftMotor.getCurrentPosition());
