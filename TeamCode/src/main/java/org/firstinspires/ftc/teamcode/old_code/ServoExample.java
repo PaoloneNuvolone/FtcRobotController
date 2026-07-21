@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanisms.TestBenchServo;
 
-@Disabled
 @TeleOp
 public class ServoExample extends OpMode {
 
@@ -24,11 +23,13 @@ public class ServoExample extends OpMode {
         } else {
             bench.setServoPos(1.0);
         }
-
+/*
         if (gamepad1.b){
             bench.setServoRot(1.0);
         } else {
             bench.setServoRot(0);
         }
+
+ */
     }
 }
