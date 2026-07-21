@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -124,7 +123,7 @@ public class TeleOpMovements extends LinearOpMode {
                 feeding = false;
                 flywheel_right.setVelocity(0);
                 flywheel_left.setVelocity(0);
-                servitore1.setPosition(SERVO_CLOSE);
+                servitore1.setPosition(SERVO_CLOSE);  // change the SERVO_CLOSE value at the 23rd line
                 servitore2.setPosition(SERVO_CLOSE);
                 upIntakeMotor.setPower(0);
             }
@@ -132,7 +131,7 @@ public class TeleOpMovements extends LinearOpMode {
             if (shooting && !feeding
                     && flywheel_left.getVelocity()>=(TARGET_VELOCITY-150)
                     && flywheel_right.getVelocity()>=(TARGET_VELOCITY-150)){
-                servitore1.setPosition(SERVO_OPEN);
+                servitore1.setPosition(SERVO_OPEN);  // change the SERVO_OPEN value at the 24th line
                 servitore2.setPosition(SERVO_OPEN);
                 feeding = true;
                 feedTimer.reset();
