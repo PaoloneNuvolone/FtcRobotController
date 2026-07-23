@@ -5,20 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp (name = "New Arcade Drive - FGC",group = "TeleOp Competition")
 public class TeleOpMovements extends LinearOpMode {
-    private DcMotor leftMotor, rightMotor, upIntakeMotor;
+    private DcMotor leftMotor, rightMotor, upIntakeMotor, upIntakeSlowMotor;
     private DcMotorEx flywheel_left, flywheel_right;
     private Servo servitore_right, servitore_left;
-    private double currentPower = 0.0;
-    private final double maxStep = 0.04;
-    double intakeVelocity;
-    private final ElapsedTime feedTimer = new ElapsedTime();
-    private static final double TARGET_VELOCITY = 1600.0;
+    private int currentPower = 0;
+    private final int maxStep = 16;
+    private static final int TARGET_VELOCITY = 1450;
     private static final double SERVO_CLOSE = 0;
-    private static final double SERVO_OPEN = 0.15;
+    private static final double SERVO_OPEN = 0.08;
     boolean flywheelActivate = false;
 
     @Override
@@ -28,6 +25,7 @@ public class TeleOpMovements extends LinearOpMode {
         leftMotor = hardwareMap.get(DcMotor.class, "left_motor");
         rightMotor = hardwareMap.get(DcMotor.class, "right_motor");
         upIntakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
+        upIntakeSlowMotor = hardwareMap.get(DcMotor.class, "second_intake_motor");
 
         servitore_right = hardwareMap.get(Servo.class, "servitore_1");
         servitore_left = hardwareMap.get(Servo.class, "servitore_2");
@@ -38,7 +36,8 @@ public class TeleOpMovements extends LinearOpMode {
         /// SET MOVE DIRECTION OF MOTORS
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        upIntakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        upIntakeMotor.setDirection(DcMotor.Direction.FORWARD); // è invertito (-1 intake, +1 outtake)
+        upIntakeSlowMotor.setDirection(DcMotor.Direction.FORWARD); // "
 
         flywheel_right.setDirection(DcMotorEx.Direction.FORWARD);
         flywheel_left.setDirection(DcMotorEx.Direction.REVERSE);
@@ -52,10 +51,11 @@ public class TeleOpMovements extends LinearOpMode {
         flywheel_right.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         flywheel_left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        /// SET USING THE ENCODER FOR THE SPEED
+        /// SET TO USE THE ENCODER FOR THE SPEED
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         upIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        upIntakeSlowMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         flywheel_right.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         flywheel_left.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -64,6 +64,7 @@ public class TeleOpMovements extends LinearOpMode {
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         upIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        upIntakeSlowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         flywheel_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         flywheel_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -75,7 +76,7 @@ public class TeleOpMovements extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
 
-            // ARCADE MODE WITH CONTROLLER
+            // ARCADE MODE WITH CONTROLLER (LEFT STICK GO BACK AND FORWARD, RIGHT STICK GO LEFT AND RIGHT
             double throttle = -gamepad1.left_stick_y;
             double spin = gamepad1.right_stick_x;
 
@@ -89,6 +90,7 @@ public class TeleOpMovements extends LinearOpMode {
                 rightPower /= max;
             }
 
+            // PRESS R2 FOR MAKING THE ROBOT GO SLOWER
             if (gamepad1.right_trigger_pressed){
                 leftPower*=0.6;
                 rightPower*=0.6;
@@ -110,17 +112,26 @@ public class TeleOpMovements extends LinearOpMode {
                 flywheel_left.setVelocity(0);
             }
 
-            // FLYWHEEL WITH TRIANGOLO e QUADRATO
+            // SECOND INTAKE FOR THE SLOWER MOTOR (PRESS CERCHIO)
 
-            if (gamepad1.yWasPressed() && !flywheelActivate){
+            if (gamepad1.b){
+                upIntakeSlowMotor.setPower(-1);
+            }
+
+            // FLYWHEEL WITH TRIANGOLO e QUADRATO (CHIEDERE AIELLO PER FARE TOGGLE DEL TRIANGOLO)
+
+            if (gamepad1.y){
                 flywheelActivate = true;
+                //int filteredTargetVelocity = update(TARGET_VELOCITY);
                 flywheel_right.setVelocity(TARGET_VELOCITY);
                 flywheel_left.setVelocity(TARGET_VELOCITY);
-            } else if (gamepad1.yWasPressed() && flywheelActivate){
+            } else if (gamepad1.xWasPressed()){
                 flywheelActivate = false;
                 flywheel_right.setVelocity(0);
                 flywheel_left.setVelocity(0);
             }
+
+            // OPEN THE SERVOS AND MAKING THE INTAKE GO
 
             if (gamepad1.a){
                 servitore_right.setPosition(SERVO_OPEN);
@@ -146,5 +157,19 @@ public class TeleOpMovements extends LinearOpMode {
             telemetry.addData("Servo's state", (gamepad1.a) ? "OPEN" : "CLOSE");
             telemetry.update();
         }
+    }
+
+    // STA ROBA NON FUNZIONA, È DA GUARDARE
+    public int update(int targetPower){
+
+        int error = targetPower - currentPower;
+        if (error < maxStep){
+            error += maxStep;
+        } else if (error > -maxStep){
+            error -= maxStep;
+        } else{
+            currentPower = targetPower;
+        }
+        return currentPower;
     }
 }
