@@ -1,0 +1,76 @@
+package org.firstinspires.ftc.teamcode.opmodes;
+
+import android.annotation.SuppressLint;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.robot.Controls;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.vision.Vision;
+
+@TeleOp(name = "Main TeleOp", group = "TeleOp")
+public class MainTeleOp extends LinearOpMode {
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void runOpMode() {
+
+        Robot robot;
+        Controls controls = new Controls(gamepad1,gamepad2); // Da i parametri del gamepad1 e gamepad2 alla classe Controls,
+        // Ricorda: i gamepad vanno dati all'interno di public void runOpMode perché prima non c'è nessun valore per i controller
+
+        try{    // try{}catch serve come sicurezza per avvertire il driver degli errori nella inizializzazione
+            // Richiamo le funzioni di inizializzazione
+            robot = new Robot(hardwareMap); // Richiama la funzione Robot in robot.Robot e gli da i parametri hardwareMap
+            telemetry.addLine("La vespa è in moto e pronta a partire \nBasta ingranare la prima marcia");
+            telemetry.update();
+
+        } catch (Exception e) {
+
+            telemetry.addData("Errore durante l'inizializzazione: ", e.getMessage());
+            telemetry.update();
+
+            sleep(5000);
+            return; // Termina l'op mode
+        }
+
+        waitForStart();
+        robot.start(); // avvia anche la limelight, se presente
+
+        while (opModeIsActive()) {
+            robot.update();
+
+            double strafe  = controls.strafe();
+            double forward = -controls.forward();
+            double turn    = controls.turn();
+            double s       = controls.driveScale();
+
+            robot.activeColor = Vision.COLOR_RED_PIPE; // Cambia qui per cambiare colore da seguire
+
+            // Un solo comando di guida per ciclo
+            if (controls.isChasingBall()){
+                robot.drivetrain.driveToBall(robot.activeBall,20);
+            } else {
+                robot.drivetrain.drive(strafe*s,forward*s,turn*s);
+            }
+
+            telemetry.addData("Slow mode", controls.isSlowMode() ? "ATTIVA (40%)" : "DISATTIVA (100%)");
+            telemetry.addData("Drive Power", "X: %.2f | Y: %.2f | Turn: %.2f",
+                    controls.strafe(), controls.forward(), controls.turn());
+            telemetry.addData("Limelight", robot.vision.isAvailable());
+            telemetry.addData("ActiveBall", robot.activeBall.valid
+                    ? String.format("tx=%.1f° dist=%.0fcm", robot.activeBall.tx, robot.activeBall.distance)
+                    : "Non vista");
+            telemetry.addData("Colore inseguito", (robot.activeColor==Vision.COLOR_RED_PIPE)
+                    ?"red"
+                    :(robot.activeColor==Vision.COLOR_BLUE_PIPE)?"blue"
+                    :"yellow");
+            telemetry.update();
+        }
+
+        robot.stop();
+    }
+}
