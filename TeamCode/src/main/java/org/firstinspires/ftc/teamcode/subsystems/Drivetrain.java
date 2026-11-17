@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.vision.BallData;
-
 public class Drivetrain {
 
     // Nomi dei dispositivi nella Robot Configuration
@@ -14,7 +12,7 @@ public class Drivetrain {
     private static final String BACK_RIGHT_MOTOR = "backrightmotor";
 
     // Motori della trasmissione
-    private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+    private final DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
 
     /// *---* Funzione per inizializzare i motori del movimento *---*
     public Drivetrain(HardwareMap hw) {
@@ -40,7 +38,6 @@ public class Drivetrain {
             m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             m.setPower(0);
         }
-
     }
 
     /// *---* Funzione Di Guida col joystick *---*
@@ -61,38 +58,7 @@ public class Drivetrain {
         backRightMotor.setPower(rb / max);
     }
 
-    /// *---* Funzione Insegui Palla *---*
-    public void driveToBall (BallData ball, double targetCm){
-        if (ball == null){
-            stopDrive();
-            return;
-        }
-
-        final double KP_TURN     = 0.02;  // guadagno per la rotazione (da tarare)
-        final double KP_FORWARD  = 0.015; // guadagno per l'avanzamento (da tarare)
-        final double MAX_TURN    = 0.4;
-        final double MAX_FORWARD = 0.5;
-        final double DEAD_TURN   = 1.5;   // gradi: sotto non corregge la rotazione
-        final double DEAD_DIST   = 3.0;   // cm: sotto non corregge la distanza
-
-        double turn = 0;
-        if (Math.abs(ball.tx) > DEAD_TURN) {
-            turn = ball.tx * KP_TURN;
-            turn = Math.max(-MAX_TURN, Math.min(MAX_TURN, turn));
-        }
-        double error = ball.distance - targetCm;
-        double forward = 0;
-        if (Math.abs(error) > DEAD_DIST) {
-            forward = error * KP_FORWARD;
-            forward = Math.max(-MAX_FORWARD, Math.min(MAX_FORWARD, forward));
-        }
-
-        drive(0, forward, turn);
-    }
-
-
     public void stopDrive() {
         drive(0, 0, 0);
     }
-
 }

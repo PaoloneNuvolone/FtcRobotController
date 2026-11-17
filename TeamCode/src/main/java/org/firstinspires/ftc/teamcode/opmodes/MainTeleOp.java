@@ -43,33 +43,54 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             robot.update();
 
+
+            /// -GUIDA-
+
             double strafe  = controls.strafe();
             double forward = -controls.forward();
             double turn    = controls.turn();
             double s       = controls.driveScale();
 
-            robot.activeColor = Vision.COLOR_RED_PIPE; // Cambia qui per cambiare colore da seguire
+
+
+            /// -VISIONE & INSEGUI PALLA-
+
+            robot.vision.pipeLineSwitch(1); // 1=red, 2=blue, 3=yellow
 
             // Un solo comando di guida per ciclo
             if (controls.isChasingBall()){
-                robot.drivetrain.driveToBall(robot.activeBall,20);
+                robot.chaseBall(20);
             } else {
                 robot.drivetrain.drive(strafe*s,forward*s,turn*s);
             }
 
+
+
+            /// -TELEMETRY-
+
             telemetry.addData("Slow mode", controls.isSlowMode() ? "ATTIVA (40%)" : "DISATTIVA (100%)");
             telemetry.addData("Drive Power", "X: %.2f | Y: %.2f | Turn: %.2f",
                     controls.strafe(), controls.forward(), controls.turn());
+
             telemetry.addData("Limelight", robot.vision.isAvailable());
-            telemetry.addData("ActiveBall", robot.activeBall.valid
-                    ? String.format("tx=%.1f° dist=%.0fcm", robot.activeBall.tx, robot.activeBall.distance)
-                    : "Non vista");
-            telemetry.addData("Colore inseguito", (robot.activeColor==Vision.COLOR_RED_PIPE)
-                    ?"red"
-                    :(robot.activeColor==Vision.COLOR_BLUE_PIPE)?"blue"
-                    :"yellow");
+            telemetry.addData("Tx ", (robot.vision.currentPipeLine==1)
+                    ? "red" : (robot.vision.currentPipeLine==2)
+                    ? "blue" : "yellow" ,robot.vision.getTx());
+            telemetry.addData("Ty ",(robot.vision.currentPipeLine==1)
+                    ? "red" : (robot.vision.currentPipeLine==2)
+                    ? "blue" : "yellow", robot.vision.getTy());
+            telemetry.addData("Ta ", (robot.vision.currentPipeLine==1)
+                    ? "red" : (robot.vision.currentPipeLine==2)
+                    ? "blue" : "yellow", robot.vision.getTa());
+            telemetry.addData("Distanza ",(robot.vision.currentPipeLine==1)
+                    ? "red" : (robot.vision.currentPipeLine==2)
+                    ? "blue" : "yellow", robot.vision.getDistance());
+
+            telemetry.addData("Inseguimento palla",controls.isChasingBall());
+
             telemetry.update();
         }
+
 
         robot.stop();
     }

@@ -21,11 +21,9 @@ public class Controls {
     public boolean isSlowMode() { return driver.right_bumper; } // Da vero se modalità rallentamento attiva
     public boolean isChasingBall() { return driver.left_bumper; } // Da vero se modalità seguimento palla attiva
 
-    private double shape(double v){ // annulla lo stick drift e eleva al cubo la velocità per maggiore precisione alle basse velocità
+    private double shape(double v){ // annulla lo stick drift ed eleva al cubo la velocità per maggiore precisione alle basse velocità
         if (Math.abs(v)< DEADZONE) return 0.0;
         return Math.pow(v, PRECISION_FACTOR);
-
     }
-
 }
 
