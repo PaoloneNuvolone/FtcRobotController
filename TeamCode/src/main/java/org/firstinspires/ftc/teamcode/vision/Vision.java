@@ -12,12 +12,12 @@ public class Vision {
     public int currentPipeLine = 1;
     private boolean valid = false;
 
-    private final double ALTEZZA_CAMERA = 18;
-    private final double ANGOLO_CAMERA = 15;
+    private final double ALTEZZA_CAMERA = 29;
+    private final double ANGOLO_CAMERA = 21.2;
     private final double ALTEZZA_PALLINA = 0;
     private double tx = 0, ty = 0, ta = 0, distance = Double.NaN;
 
-    
+
     /// --------------------------------------------------------------------------------------------
 
 

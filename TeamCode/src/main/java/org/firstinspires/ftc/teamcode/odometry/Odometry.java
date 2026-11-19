@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
-public class Localizer {
+public class Odometry {
 }

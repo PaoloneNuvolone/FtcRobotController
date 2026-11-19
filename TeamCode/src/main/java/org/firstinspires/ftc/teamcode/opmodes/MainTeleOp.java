@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.vision.Vision;
 
-@TeleOp(name = "Main TeleOp", group = "TeleOp")
+@TeleOp(name = "Main TeleOp Prova", group = "TeleOp")
 public class MainTeleOp extends LinearOpMode {
 
     @SuppressLint("DefaultLocale")
@@ -53,16 +53,12 @@ public class MainTeleOp extends LinearOpMode {
 
 
 
-            /// -VISIONE & INSEGUI PALLA-
+            /// -VISIONE -
 
             robot.vision.pipeLineSwitch(1); // 1=red, 2=blue, 3=yellow
 
             // Un solo comando di guida per ciclo
-            if (controls.isChasingBall()){
-                robot.chaseBall(20);
-            } else {
-                robot.drivetrain.drive(strafe*s,forward*s,turn*s);
-            }
+            robot.drivetrain.drive(strafe*s,forward*s,turn*s);
 
 
 
@@ -73,18 +69,10 @@ public class MainTeleOp extends LinearOpMode {
                     controls.strafe(), controls.forward(), controls.turn());
 
             telemetry.addData("Limelight", robot.vision.isAvailable());
-            telemetry.addData("Tx ", (robot.vision.currentPipeLine==1)
-                    ? "red" : (robot.vision.currentPipeLine==2)
-                    ? "blue" : "yellow" ,robot.vision.getTx());
-            telemetry.addData("Ty ",(robot.vision.currentPipeLine==1)
-                    ? "red" : (robot.vision.currentPipeLine==2)
-                    ? "blue" : "yellow", robot.vision.getTy());
-            telemetry.addData("Ta ", (robot.vision.currentPipeLine==1)
-                    ? "red" : (robot.vision.currentPipeLine==2)
-                    ? "blue" : "yellow", robot.vision.getTa());
-            telemetry.addData("Distanza ",(robot.vision.currentPipeLine==1)
-                    ? "red" : (robot.vision.currentPipeLine==2)
-                    ? "blue" : "yellow", robot.vision.getDistance());
+            telemetry.addData("Tx ",robot.vision.getTx());
+            telemetry.addData("Ta",robot.vision.getTa());
+            telemetry.addData("distance", robot.vision.getDistance());
+
 
             telemetry.addData("Inseguimento palla",controls.isChasingBall());
 

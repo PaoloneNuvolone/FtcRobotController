@@ -11,12 +11,12 @@ public class Controls {
 
     private static final double DEADZONE = 0.05; // per lo stick drift
     private static final double SLOW_FACTOR = 0.4; // fattore di rallentamento della velocità
-    private static final double PRECISION_FACTOR = 2; // fattore di precisione della velocità perché la elevo al PRECISION_FACTOR
+    private static final double PRECISION_FACTOR = 3; // fattore di precisione della velocità perché la elevo al PRECISION_FACTOR
 
     // Movimento
     public double strafe()  { return shape(driver.left_stick_x); } // Movimento laterale dx e sx
     public double forward() { return shape(-driver.left_stick_y); } // Movimento avanti e indietro
-    public double turn()    { return shape(driver.right_stick_x); } // Rotazione dx e sx
+    public double turn()    { return shape(-driver.right_stick_x); } // Rotazione dx e sx
     public double driveScale() { return driver.right_bumper ? SLOW_FACTOR : 1.0; } // Fattore di rallentamento se mm
     public boolean isSlowMode() { return driver.right_bumper; } // Da vero se modalità rallentamento attiva
     public boolean isChasingBall() { return driver.left_bumper; } // Da vero se modalità seguimento palla attiva

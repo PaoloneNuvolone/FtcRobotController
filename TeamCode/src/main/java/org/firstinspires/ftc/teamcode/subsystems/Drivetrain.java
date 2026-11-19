@@ -47,10 +47,11 @@ public class Drivetrain {
         double lb = y - x + turn;
         double rb = y + x - turn;
 
-        // Normalizza: se qualcuno supera 1, scala tutti a 1
+        // Trova il valore assoluto massimo. Se tutti sono <= 1, max rimane 1.0
         double max = Math.max(1.0,
                 Math.max(Math.abs(lf), Math.max(Math.abs(rf),
-                Math.max(Math.abs(lb), Math.abs(rb)))));
+                        Math.max(Math.abs(lb), Math.abs(rb)))));
+
 
         frontLeftMotor.setPower(lf / max);
         frontRightMotor.setPower(rf / max);
